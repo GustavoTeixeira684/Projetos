@@ -1,2 +1,2 @@
 # Projetos
-Um pouco dos meus projetos pessoais
+Um pouco dos meus trabalhos pessoais
