@@ -1,0 +1,176 @@
+# GUSTAVO TEIXEIRA DOS SANTOS | TIA: 32197020
+# CLEVERSON PEREIRA DA SILVA | TIA: 
+
+.data
+
+	texto_inicial: .asciiz "\n\nPor favor, digite a opção desejada:\n\t1 - Cálculo com inteiros\n\t2 - Cálculo com ponto flutuante\nEscolha: "
+	texto_erro: .asciiz "\nPor favor, digite um valor válido:\n"
+	texto_opcao_operacao: .asciiz "\nPor favor, digite a operação desejada:\n\t1 - Adição\n\t2 - Subtração\n\t3 - Multiplicação\n\t4 - Divisão\nEscolha: "
+	le_primeiro_valor: .asciiz "\nPor favor, digite o primeiro valor: "
+	le_segundo_valor: .asciiz "\nPor favor, digite o segundo valor: "
+	texto_resultado1: .asciiz "\nO resultado da operação entre "
+	texto_resultado2: .asciiz " e "
+	texto_resultado3: .asciiz " é: "
+	texto_final: .asciiz "\n\n DESEJA UTILIZAR O SOFTWARE NOVAMENTE? (Digite 1 para sim): "
+
+.text
+
+	# t0 - Armazena se o usuário deseja realizar uma operação entre inteiros ou ponto flutuante
+	# t5 - Armazena o tipo de operação que o usuário deseja realizar (Adição, subtração, multiplicação ou divisão)
+
+	# ATRIBUI VALORES CONSTANTES PARA PARÂMETRO
+	la $t1, 1 # Recebe valor constante 1
+	la $t2, 2 # Recebe valor constante 2
+	la $t3, 3 # Recebe valor constante 3
+	la $t4, 4 # Recebe valor constante 4
+
+	inicio:
+		li $v0, 4 # Exibe o texto inicial para o usuário
+		la $a0, texto_inicial
+		syscall
+		
+		li $v0, 5 # Lê o tipo de operação que o usuário deseja (Inteiro ou Ponto Flutuante)
+		syscall
+		move $t0, $v0
+	
+		bgt $t0, $t2, erro1 # Se o usuário selecionar um valor que não seja entre 1 e 2 (As opções válidas) retorna um erro e inicia o processo novamente
+		blt $t0, $t1, erro1
+		
+	Escolhe_operacao:
+		
+		li $v0, 4
+		la $a0, texto_opcao_operacao # Exibe as opções possíveis para o usuário
+		syscall
+		
+		li $v0, 5 # Lê a opção desejada do usuário
+		syscall
+		move $t5, $v0
+		
+		bgt $t5, $t4, erro2 # Se o usuário selecionar um valor que não seja entre 1 e 4 (As opções válidas) retorna um erro e inicia essa parte do processo novamente
+		blt $t5, $t1, erro2
+		
+		li $v0, 4
+		la $a0, le_primeiro_valor # Exibe mensagem pedindo para o usuário digitar o primeiro valor
+		syscall
+		
+		li $v0, 5 # Lê o primeiro valor
+		syscall
+		move $a1, $v0
+		
+		li $v0, 4
+		la $a0, le_segundo_valor # Exibe mensagem pedindo para o usuário digitar o segundo valor
+		syscall
+		
+		li $v0, 5 # Lê o segundo valor
+		syscall
+		move $a2, $v0
+	
+		beq $t0, $t1, Inteiro # Se o usuário selecionou Inteiro, manda para a parte do código direcionada aos Inteiros
+		
+		beq $t5, $t1, AdicaoFloat
+		beq $t5, $t2, SubtracaoFloat
+		beq $t5, $t3, MultiplicacaoFloat
+		beq $t5, $t4, DivisaoFloat
+		
+		Inteiro:
+		
+			beq $t5, $t1, AdicaoInteiro
+			beq $t5, $t2, SubtracaoInteiro
+			beq $t5, $t3, MultiplicacaoInteiro
+			beq $t5, $t4, DivisaoInteiro
+	
+	
+	erro1: # Bloco de código que exibe erro ao escolher o tipo da operação e retorna para o inicio
+	
+		li $v0, 4
+		la $a0, texto_erro # Se o usuário não digitou nenhum valor válido, exibe uma mensagem de erro e começa novamente.
+		syscall
+	
+		j inicio
+	
+	erro2: # Bloco de código que exibe erro ao escolher a operação e retorna para o bloco específico do código
+		
+		li $v0, 4
+		la $a0, texto_erro # Se o usuário não digitou nenhum valor válido, exibe uma mensagem de erro e começa novamente.
+		syscall
+	
+		j Escolhe_operacao
+		
+		
+	exibe_resultado:
+	
+		li $v0, 4
+		la $a0, texto_resultado1
+		syscall
+		
+		li $v0, 1
+		move $a0, $a1
+		syscall
+		
+		li $v0, 4
+		la $a0, texto_resultado2
+		syscall
+		
+		li $v0, 1
+		move $a0, $a2
+		syscall
+		
+		li $v0, 4
+		la $a0, texto_resultado3
+		syscall
+		
+		li $v0, 1
+		move $a0, $v1
+		syscall
+		
+		li $v0, 4
+		la $a0, texto_final
+		syscall
+		
+		li $v0, 5
+		syscall
+		
+		beq $v0, $t1, inicio
+		
+		li $v0, 10
+		syscall
+		
+	
+	AdicaoInteiro:
+
+		add $v1, $a1, $a2
+		j exibe_resultado
+
+	SubtracaoInteiro:
+	
+		sub $v1, $a1, $a2
+		j exibe_resultado
+	
+	MultiplicacaoInteiro:
+	
+		mul $v1, $a1, $a2
+		j exibe_resultado
+	
+	DivisaoInteiro:
+	
+		div $a1, $a2
+		mflo $v1
+		j exibe_resultado
+	
+	AdicaoFloat:
+	
+	
+	
+	SubtracaoFloat:
+	
+	
+	
+	MultiplicacaoFloat:
+	
+	
+	
+	DivisaoFloat:
+	
+	
+	
+	
